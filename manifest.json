@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Reability",
+  "description": "Automation for cut/paste",
+  "version": "1.0",
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/reability-16.png",
+      "48": "icons/reability-48.png",
+      "128": "icons/reability-128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["drawer.js"]
+    }
+  ],
+  "icons": {
+    "16": "icons/reability-16.png",
+    "32": "icons/reability-32.png",
+    "48": "icons/reability-48.png",
+    "64": "icons/reability-64.png",
+    "128": "icons/reability-128.png"
+  }
+}
