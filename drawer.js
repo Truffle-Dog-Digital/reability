@@ -17,7 +17,6 @@ function injectDrawerStyles() {
       <style>
           #myExtensionDrawer {
               height: 100%;
-              width: 0; /* initially hidden */
               position: fixed;
               z-index: 1000;
               top: 0;
@@ -83,7 +82,7 @@ injectDrawerStyles();
 setupDrawerToggle();
 
 // Check the current URL and automatically open the drawer if it matches
-if (window.location.href.includes('environment.nsw')) {
+if (window.location.href.includes('linkedin.com/in/')) {
   console.log("URL check passed, opening drawer");
   const drawer = document.getElementById('myExtensionDrawer');
   drawer.classList.remove('myext-drawer-closed');
