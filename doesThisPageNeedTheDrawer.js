@@ -57,7 +57,7 @@ function setupDrawerToggle() {
   }
   closeButton.addEventListener("click", function () {
     const drawer = document.getElementById("myExtensionDrawer");
-    console.log("Toggling drawer visibility");
+    console.log("REABILITY: Toggling drawer visibility");
     drawer.classList.toggle("myext-drawer-open");
     drawer.classList.toggle("myext-drawer-closed");
   });
@@ -65,10 +65,10 @@ function setupDrawerToggle() {
 
 // Listen for messages from the popup
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  console.log("Received message:", message);
+  console.log("REABILITY: Received message:", message);
   if (message.action === "toggleDrawer") {
     const drawer = document.getElementById("myExtensionDrawer");
-    console.log("Toggling drawer from message");
+    console.log("REABILITY: Toggling drawer from message");
     drawer.classList.toggle("myext-drawer-open");
     drawer.classList.toggle("myext-drawer-closed");
   }
@@ -83,10 +83,10 @@ setupDrawerToggle();
 
 // Check the current URL and automatically open the drawer if it matches
 if (window.location.href.includes("linkedin.com/in/")) {
-  console.log("URL check passed, opening drawer");
+  console.log("REABILITY: URL check passed, opening drawer");
   const drawer = document.getElementById("myExtensionDrawer");
   drawer.classList.remove("myext-drawer-closed");
   drawer.classList.add("myext-drawer-open");
 } else {
-  console.log("URL does not match, keeping drawer closed");
+  console.log("REABILITY: URL does not match, keeping drawer closed");
 }
