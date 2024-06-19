@@ -3,10 +3,15 @@
   "name": "Reability",
   "description": "Automation for cut/paste",
   "version": "1.0",
-  "permissions": ["activeTab", "tabs"],
-  "host_permissions": ["<all_urls>"],
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "action": {
-    "default_popup": "index.html",
+    "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/reability-16.png",
       "48": "icons/reability-48.png",
@@ -15,8 +20,8 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://*.lusha.com/*", "https://*.linkedin.com/*"],
-      "js": ["bundle.js"]
+      "matches": ["<all_urls>"],
+      "js": ["drawer.js"]
     }
   ],
   "icons": {
