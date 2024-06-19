@@ -7,7 +7,7 @@ function injectDrawerHTML() {
           <!-- Add more content for the drawer here -->
       </div>
   `;
-  document.body.insertAdjacentHTML('beforeend', drawerHTML);
+  document.body.insertAdjacentHTML("beforeend", drawerHTML);
 }
 
 // Inject the CSS for the drawer
@@ -44,33 +44,33 @@ function injectDrawerStyles() {
           }
       </style>
   `;
-  document.head.insertAdjacentHTML('beforeend', styles);
+  document.head.insertAdjacentHTML("beforeend", styles);
 }
 
 // Setup drawer toggle behavior
 function setupDrawerToggle() {
   console.log("Setting up Drawer Toggle");
-  const closeButton = document.getElementById('myExtensionCloseButton');
+  const closeButton = document.getElementById("myExtensionCloseButton");
   if (!closeButton) {
     console.error("Close button not found!");
     return;
   }
-  closeButton.addEventListener('click', function() {
-      const drawer = document.getElementById('myExtensionDrawer');
-      console.log("Toggling drawer visibility");
-      drawer.classList.toggle('myext-drawer-open');
-      drawer.classList.toggle('myext-drawer-closed');
+  closeButton.addEventListener("click", function () {
+    const drawer = document.getElementById("myExtensionDrawer");
+    console.log("Toggling drawer visibility");
+    drawer.classList.toggle("myext-drawer-open");
+    drawer.classList.toggle("myext-drawer-closed");
   });
 }
 
 // Listen for messages from the popup
-chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   console.log("Received message:", message);
   if (message.action === "toggleDrawer") {
-      const drawer = document.getElementById('myExtensionDrawer');
-      console.log("Toggling drawer from message");
-      drawer.classList.toggle('myext-drawer-open');
-      drawer.classList.toggle('myext-drawer-closed');
+    const drawer = document.getElementById("myExtensionDrawer");
+    console.log("Toggling drawer from message");
+    drawer.classList.toggle("myext-drawer-open");
+    drawer.classList.toggle("myext-drawer-closed");
   }
 });
 
@@ -82,11 +82,11 @@ injectDrawerStyles();
 setupDrawerToggle();
 
 // Check the current URL and automatically open the drawer if it matches
-if (window.location.href.includes('linkedin.com/in/')) {
+if (window.location.href.includes("linkedin.com/in/")) {
   console.log("URL check passed, opening drawer");
-  const drawer = document.getElementById('myExtensionDrawer');
-  drawer.classList.remove('myext-drawer-closed');
-  drawer.classList.add('myext-drawer-open');
+  const drawer = document.getElementById("myExtensionDrawer");
+  drawer.classList.remove("myext-drawer-closed");
+  drawer.classList.add("myext-drawer-open");
 } else {
   console.log("URL does not match, keeping drawer closed");
 }
