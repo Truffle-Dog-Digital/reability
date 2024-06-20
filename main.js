@@ -41,9 +41,6 @@ function injectDrawer() {
       } else {
         console.error("REABILITY: Drawer CSS not found in main.html");
       }
-
-      // Open the drawer
-      openDrawer();
     })
     .catch((error) =>
       console.error("REABILITY: Error fetching main.html:", error)
