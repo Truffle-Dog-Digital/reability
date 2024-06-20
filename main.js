@@ -47,17 +47,20 @@ function injectDrawer() {
     );
 }
 
-// Function to open the drawer
-function openDrawer() {
-  console.log("REABILITY: Opening drawer");
-  const drawer = document.getElementById("myExtensionDrawer");
-  if (drawer) {
-    drawer.classList.remove("myext-drawer-closed");
-    drawer.classList.add("myext-drawer-open");
-    console.log("REABILITY: Drawer opened successfully");
-  } else {
-    console.error("REABILITY: Drawer element not found");
+// Setup drawer toggle behavior
+function setupDrawerToggle() {
+  console.log("Setting up Drawer Toggle");
+  const closeButton = document.getElementById("myExtensionCloseButton");
+  if (!closeButton) {
+    console.error("Close button not found!");
+    return;
   }
+  closeButton.addEventListener("click", function () {
+    const drawer = document.getElementById("myExtensionDrawer");
+    console.log("REABILITY: Toggling drawer visibility");
+    drawer.classList.toggle("myext-drawer-open");
+    drawer.classList.toggle("myext-drawer-closed");
+  });
 }
 
 // Inject drawer HTML and CSS into the webpage on initial load
