@@ -3,6 +3,8 @@ console.log("REABILITY: main.js script loaded");
 document.addEventListener("DOMContentLoaded", (event) => {
   console.log("REABILITY: DOMContentLoaded event triggered");
   injectDrawer();
+  setupDrawerToggle();
+  console.log("REABILITY: DOMContentLoaded event finished");
 });
 
 // Function to inject the drawer HTML and CSS from main.html
@@ -62,6 +64,3 @@ function setupDrawerToggle() {
     drawer.classList.toggle("myext-drawer-closed");
   });
 }
-
-// Inject drawer HTML and CSS into the webpage on initial load
-injectDrawer();
