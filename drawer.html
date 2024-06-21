@@ -1,0 +1,54 @@
+<head>
+  <style>
+    #myExtensionDrawer {
+      height: 100%;
+      width: 300px;
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      right: 0;
+      background-color: white;
+      overflow-x: hidden;
+      transition: 0.5s;
+      border-left: 1px solid #ccc;
+      font-family: Arial, sans-serif;
+    }
+
+    #drawerHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      background-color: #f5f5f5;
+    }
+
+    #drawerHeader h1 {
+      font-size: 14px;
+      font-weight: bold;
+      margin: 0;
+      color: #333;
+    }
+
+    #myExtensionCloseButton {
+      font-size: 16px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .drawer-content {
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="myExtensionDrawer">
+    <div id="drawerHeader">
+      <h1>Reability</h1>
+      <button id="myExtensionCloseButton">-</button>
+    </div>
+    <div class="drawer-content"></div>
+  </div>
+</body>
