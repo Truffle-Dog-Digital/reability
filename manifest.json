@@ -4,14 +4,12 @@
   "description": "Automation for cut/paste",
   "version": "1.0",
   "permissions": ["activeTab", "tabs"],
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": ["*://dashboard.lusha.com/*"],
   "content_scripts": [
     {
-      "matches": [
-        "*://*.linkedin.com/in/*",
-        "*://dashboard.lusha.com/prospecting/contacts*"
-      ],
-      "js": ["main.js"]
+      "matches": ["*://dashboard.lusha.com/prospecting/contacts*"],
+      "js": ["main.js"],
+      "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [

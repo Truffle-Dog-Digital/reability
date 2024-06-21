@@ -1,9 +1,8 @@
-<!-- Only the STYLE and BODY of this are used -->
-
 <head>
   <style>
     #myExtensionDrawer {
       height: 100%;
+      width: 300px; /* Adjusted width to match the example */
       position: fixed;
       z-index: 1000;
       top: 0;
@@ -11,33 +10,48 @@
       background-color: white;
       overflow-x: hidden;
       transition: 0.5s;
-      padding-top: 60px;
       border-left: 1px solid #ccc;
+      font-family: Arial, sans-serif; /* Using a simple font for now */
     }
 
-    .myext-drawer-open {
-      width: 250px; /* width when open */
+    #drawerHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px; /* Reduced padding to make the header 40% smaller */
+      border-bottom: 1px solid #eee;
+      background-color: #f5f5f5;
     }
 
-    .myext-drawer-closed {
-      width: 0; /* width when closed */
+    #drawerHeader h1 {
+      font-size: 14px; /* Adjust font size if necessary */
+      font-weight: bold;
+      margin: 0;
+      color: #333;
     }
 
     #myExtensionCloseButton {
-      position: absolute;
-      top: 20px;
-      right: 25px;
-      font-size: 30px;
+      font-size: 16px; /* Adjust font size if necessary */
       border: none;
       background: none;
       cursor: pointer;
+      color: #666;
+    }
+
+    /* Additional styles for content */
+    .drawer-content {
+      padding: 20px;
     }
   </style>
 </head>
 <body>
-  <div id="myExtensionDrawer" class="myext-drawer-open">
-    <button id="myExtensionCloseButton" class="myext-close-btn">Close</button>
-    <!-- Add more content for the drawer here -->
+  <div id="myExtensionDrawer">
+    <div id="drawerHeader">
+      <h1>Reality</h1>
+      <button id="myExtensionCloseButton">-</button>
+    </div>
+    <div class="drawer-content">
+      <!-- Add more content for the drawer here -->
+    </div>
   </div>
 </body>
-</html>

@@ -1,11 +1,7 @@
 console.log("REABILITY: main.js script loaded");
 
-document.addEventListener("DOMContentLoaded", (event) => {
-  console.log("REABILITY: DOMContentLoaded event triggered");
-  injectDrawer();
-  setupDrawerToggle();
-  console.log("REABILITY: DOMContentLoaded event finished");
-});
+// Directly call injectDrawer function
+injectDrawer();
 
 // Function to inject the drawer HTML and CSS from main.html
 function injectDrawer() {
@@ -43,24 +39,26 @@ function injectDrawer() {
       } else {
         console.error("REABILITY: Drawer CSS not found in main.html");
       }
+
+      // Set up the close button
+      setupDrawerCloseButton();
     })
-    .catch((error) =>
-      console.error("REABILITY: Error fetching main.html:", error)
-    );
+    .catch((error) => {
+      console.error("REABILITY: Error fetching main.html:", error);
+    });
 }
 
-// Setup drawer toggle behavior
-function setupDrawerToggle() {
-  console.log("Setting up Drawer Toggle");
+// Setup drawer close button behavior
+function setupDrawerCloseButton() {
+  console.log("REABILITY: Setting up Drawer Close Button");
   const closeButton = document.getElementById("myExtensionCloseButton");
   if (!closeButton) {
-    console.error("Close button not found!");
+    console.error("REABILITY: Close button not found!");
     return;
   }
   closeButton.addEventListener("click", function () {
     const drawer = document.getElementById("myExtensionDrawer");
-    console.log("REABILITY: Toggling drawer visibility");
-    drawer.classList.toggle("myext-drawer-open");
-    drawer.classList.toggle("myext-drawer-closed");
+    console.log("REABILITY: Closing drawer");
+    drawer.style.display = "none";
   });
 }
