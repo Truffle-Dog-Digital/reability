@@ -3,18 +3,23 @@
   "name": "Reability",
   "description": "Automation for cut/paste",
   "version": "1.0",
-  "permissions": ["activeTab", "tabs"],
+  "permissions": ["activeTab", "tabs", "storage"],
   "host_permissions": ["*://dashboard.lusha.com/*"],
   "content_scripts": [
     {
       "matches": ["*://dashboard.lusha.com/prospecting/contacts*"],
-      "js": ["drawer.js", "lusha-contacts.js"],
+      "js": ["helpers.js", "drawer.js", "lusha-contacts.js"],
       "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["drawer.html", "lusha-contacts.html"],
+      "resources": [
+        "drawer.html",
+        "drawer.css",
+        "lusha-contacts.html",
+        "lusha-contacts.css"
+      ],
       "matches": ["*://dashboard.lusha.com/*"]
     }
   ],
