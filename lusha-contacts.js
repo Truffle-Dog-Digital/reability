@@ -73,14 +73,17 @@ function addContactToLemlist(apiKey, linkedinUrl) {
     .catch((error) => console.error("Error adding contact:", error));
 }
 
-function injectLushaContacts() {
-  injectHTMLandCSS(
-    "lusha-contacts.html",
-    "lusha-contacts.css",
-    "#reabilityDrawerContent"
-  )
-    .then(() => setupScanButton())
-    .catch((error) => console.error(error));
-}
-
-injectLushaContacts();
+injectHTMLAndCSS(
+  "lusha-contacts.html",
+  "lusha-contacts.css",
+  ".reabilityDrawerContent"
+)
+  .then(() => {
+    setupScanButton();
+  })
+  .catch((error) => {
+    console.error(
+      "REABILITY: Error injecting Lusha Contacts HTML and CSS:",
+      error
+    );
+  });

@@ -1,34 +1,33 @@
-function injectHTMLandCSS(htmlFile, cssFile, targetElementId) {
+function injectHTMLAndCSS(htmlPath, cssPath, injectInto) {
   return new Promise((resolve, reject) => {
-    const url = chrome.runtime.getURL(htmlFile);
-    fetch(url)
+    // Fetch and inject CSS
+    fetch(chrome.runtime.getURL(cssPath))
       .then((response) => response.text())
-      .then((data) => {
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = data;
-
-        // Append CSS if provided
-        if (cssFile) {
-          const cssURL = chrome.runtime.getURL(cssFile);
-          const linkElement = document.createElement("link");
-          linkElement.rel = "stylesheet";
-          linkElement.href = cssURL;
-          document.head.appendChild(linkElement);
-        }
-
-        // Append HTML to target element
-        const targetElement = document.querySelector(targetElementId);
-        if (targetElement) {
-          while (tempDiv.firstChild) {
-            targetElement.appendChild(tempDiv.firstChild);
-          }
-          resolve();
-        } else {
-          reject(`Target element with ID ${targetElementId} not found.`);
-        }
+      .then((css) => {
+        const style = document.createElement("style");
+        style.textContent = css;
+        document.head.appendChild(style);
       })
-      .catch((error) => {
-        reject(`Error fetching ${htmlFile}: ${error}`);
-      });
+      .catch((error) => reject(error));
+
+    // Fetch and inject HTML
+    fetch(chrome.runtime.getURL(htmlPath))
+      .then((response) => response.text())
+      .then((html) => {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html;
+        if (injectInto) {
+          const injectTarget = document.querySelector(injectInto);
+          while (tempDiv.firstChild) {
+            injectTarget.appendChild(tempDiv.firstChild);
+          }
+        } else {
+          while (tempDiv.firstChild) {
+            document.body.appendChild(tempDiv.firstChild);
+          }
+        }
+        resolve();
+      })
+      .catch((error) => reject(error));
   });
 }
