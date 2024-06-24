@@ -8,7 +8,7 @@
   "content_scripts": [
     {
       "matches": ["*://dashboard.lusha.com/prospecting/contacts*"],
-      "js": ["helpers.js", "drawer.js", "lusha-contacts.js"],
+      "js": ["helpers.js", "drawer.js"],
       "run_at": "document_end"
     }
   ],
