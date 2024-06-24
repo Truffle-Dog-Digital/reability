@@ -4,11 +4,14 @@
   "description": "Automation for cut/paste",
   "version": "1.0",
   "permissions": ["activeTab", "tabs", "storage"],
-  "host_permissions": ["*://dashboard.lusha.com/*"],
+  "host_permissions": ["*://api.lemlist.com/*", "*://dashboard.lusha.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["*://dashboard.lusha.com/prospecting/contacts*"],
-      "js": ["helpers.js", "drawer.js"],
+      "js": ["helpers.js", "drawer.js", "lusha-contacts.js"],
       "run_at": "document_end"
     }
   ],

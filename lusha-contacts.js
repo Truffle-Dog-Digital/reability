@@ -5,33 +5,24 @@ function setupScanButton() {
   }
 }
 
-function handleScanButtonClick() {
-  checkLemlistApiKey()
-    .then((apiKey) => {
-      if (!apiKey) {
-        apiKey = prompt("Please enter your Lemlist API Key:");
-        chrome.storage.local.set({ lemlist_api_key: apiKey }, () => {
-          console.log("API key saved.");
-          processContacts(apiKey);
-        });
-      } else {
-        processContacts(apiKey);
-      }
-    })
-    .catch((error) =>
-      console.error("Error retrieving Lemlist API key:", error)
-    );
+async function handleScanButtonClick() {
+  console.log("REABILITY: Scan button clicked");
+  let apiKey = await getLocalStorage("lemlist_api_key");
+  if (!apiKey) {
+    apiKey = prompt("Please enter your Lemlist API Key:");
+    if (apiKey) {
+      await setLocalStorage("lemlist_api_key", apiKey);
+      console.log("REABILITY: API key saved.");
+    }
+  }
+
+  if (apiKey) {
+    console.log("REABILITY: API key available, processing contacts");
+    processContacts(apiKey);
+  }
 }
 
-function checkLemlistApiKey() {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.get(["lemlist_api_key"], (result) => {
-      resolve(result.lemlist_api_key);
-    });
-  });
-}
-
-function processContacts(apiKey) {
+async function processContacts(apiKey) {
   const contacts = document.querySelectorAll(
     "[data-test-id^='contacts-table-contact-name-']"
   );
@@ -47,36 +38,47 @@ function processContacts(apiKey) {
     }
   });
 
+  console.log("REABILITY: Found LinkedIn URLs", linkedinUrls);
+
   linkedinUrls.forEach((url) => {
     addContactToLemlist(apiKey, url);
   });
 }
 
 function addContactToLemlist(apiKey, linkedinUrl) {
-  const apiUrl = "https://api.lemlist.com/api/contacts";
-  const data = {
-    email: "",
-    linkedinUrl: linkedinUrl,
-    tags: ["LI Outreach"],
-  };
+  const apiUrl = `https://api.lemlist.com/api/campaigns/cam_Dz9yzoMjNz7NLA26i/leads`;
+  const body = { linkedinUrl: linkedinUrl };
 
-  fetch(apiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
+  console.log("REABILITY: URL: ", apiUrl);
+  console.log("REABILITY: Body: ", body);
+
+  chrome.runtime.sendMessage(
+    {
+      action: "callLemList",
+      method: "POST",
+      url: apiUrl,
+      body: body,
     },
-    body: JSON.stringify(data),
-  })
-    .then((response) => response.json())
-    .then((result) => console.log("Contact added:", result))
-    .catch((error) => console.error("Error adding contact:", error));
+    (response) => {
+      console.log("REABILITY: Response received", response);
+      if (response && response.error) {
+        console.error("REABILITY: Error adding contact:", response.error);
+      } else if (response && response.data) {
+        console.log("REABILITY: Contact added:", response.data);
+      } else {
+        console.error(
+          "REABILITY: No response or unexpected response format",
+          response
+        );
+      }
+    }
+  );
 }
 
 injectHTMLAndCSS(
   "lusha-contacts.html",
   "lusha-contacts.css",
-  ".reabilityDrawerContent"
+  "#reabilityDrawerContent"
 )
   .then(() => {
     setupScanButton();
