@@ -61,15 +61,16 @@ function addContactToLemlist(apiKey, linkedinUrl) {
     },
     (response) => {
       console.log("REABILITY: Response received", response);
-      if (response && response.error) {
-        console.error("REABILITY: Error adding contact:", response.error);
-      } else if (response && response.data) {
-        console.log("REABILITY: Contact added:", response.data);
+      if (response) {
+        if (response.error) {
+          console.error("REABILITY: Error adding contact:", response.error);
+        } else if (response.data) {
+          console.log("REABILITY: Contact added:", response.data);
+        } else {
+          console.error("REABILITY: Unexpected response format", response);
+        }
       } else {
-        console.error(
-          "REABILITY: No response or unexpected response format",
-          response
-        );
+        console.error("REABILITY: No response received");
       }
     }
   );

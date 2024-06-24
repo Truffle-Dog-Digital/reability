@@ -32,13 +32,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         .then((response) => {
           if (!response.ok) {
             throw new Error(
-              "Network response was not ok " + response.statusText
+              `Network response was not ok: ${response.statusText}`
             );
           }
           return response.json();
         })
         .then((data) => {
-          console.log("REABILITY: Fetch successful", data);
+          console.log("REABILITY: Fetch successful, sending response", data);
           sendResponse({ data: data });
         })
         .catch((error) => {
