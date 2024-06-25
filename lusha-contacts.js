@@ -45,35 +45,47 @@ async function processContacts(apiKey) {
   });
 }
 
-function addContactToLemlist(apiKey, linkedinUrl) {
+async function addContactToLemlist(apiKey, linkedinUrl) {
   const apiUrl = `https://api.lemlist.com/api/campaigns/cam_Dz9yzoMjNz7NLA26i/leads`;
   const body = { linkedinUrl: linkedinUrl };
 
   console.log("REABILITY: URL: ", apiUrl);
   console.log("REABILITY: Body: ", body);
 
-  chrome.runtime.sendMessage(
-    {
-      action: "callLemList",
-      method: "POST",
-      url: apiUrl,
-      body: body,
-    },
-    (response) => {
-      console.log("REABILITY: Response received", response);
-      if (response) {
-        if (response.error) {
-          console.error("REABILITY: Error adding contact:", response.error);
-        } else if (response.data) {
-          console.log("REABILITY: Contact added:", response.data);
-        } else {
-          console.error("REABILITY: Unexpected response format", response);
+  try {
+    const response = await new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        {
+          action: "callLemList",
+          method: "POST",
+          url: apiUrl,
+          body: body,
+        },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError.message));
+          } else {
+            resolve(response);
+          }
         }
+      );
+    });
+
+    console.log("REABILITY: Response received", response);
+    if (response) {
+      if (response.error) {
+        console.error("REABILITY: Error adding contact:", response.error);
+      } else if (response.data) {
+        console.log("REABILITY: Contact added:", response.data);
       } else {
-        console.error("REABILITY: No response received");
+        console.error("REABILITY: Unexpected response format", response);
       }
+    } else {
+      console.error("REABILITY: No response received");
     }
-  );
+  } catch (error) {
+    console.error("REABILITY: Error during request:", error.message);
+  }
 }
 
 injectHTMLAndCSS(

@@ -15,7 +15,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
       console.log("REABILITY: API key found", apiKey);
 
-      // Append the API key as a URL parameter named access_token
       const url = new URL(request.url);
       url.searchParams.append("access_token", apiKey);
       console.log("REABILITY: Fetch URL", url.toString());
@@ -49,5 +48,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       // Return true to indicate you will send a response asynchronously
       return true;
     });
+    return true; // Ensure this is returned immediately after registering async operations
   }
 });
