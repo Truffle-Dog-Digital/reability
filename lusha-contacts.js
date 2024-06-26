@@ -5,8 +5,8 @@ function setupScanButton() {
   }
 }
 
-async function handleScanButtonClick() {
-  console.log("REABILITY: Scan button clicked");
+// New function to get API key
+async function getApiKey() {
   let apiKey = await getLocalStorage("lemlist_api_key");
   if (!apiKey) {
     apiKey = prompt("Please enter your Lemlist API Key:");
@@ -15,14 +15,22 @@ async function handleScanButtonClick() {
       console.log("REABILITY: API key saved.");
     }
   }
+  return apiKey;
+}
 
+// Refactored handleScanButtonClick
+async function handleScanButtonClick() {
+  console.log("REABILITY: Scan button clicked");
+  const apiKey = await getApiKey();
   if (apiKey) {
     console.log("REABILITY: API key available, processing contacts");
-    processContacts(apiKey);
+    const linkedinUrls = await getLushaContacts();
+    await createLemlistContacts(linkedinUrls, apiKey);
   }
 }
 
-async function processContacts(apiKey) {
+// Renamed function to get selected Lusha contacts
+async function getLushaContacts() {
   const contacts = document.querySelectorAll(
     "[data-test-id^='contacts-table-contact-name-']"
   );
@@ -39,27 +47,20 @@ async function processContacts(apiKey) {
   });
 
   console.log("REABILITY: Found LinkedIn URLs", linkedinUrls);
-
-  linkedinUrls.forEach((url) => {
-    addContactToLemlist(apiKey, url);
-  });
+  return linkedinUrls;
 }
 
-async function addContactToLemlist(apiKey, linkedinUrl) {
-  const apiUrl = `https://api.lemlist.com/api/campaigns/cam_Dz9yzoMjNz7NLA26i/leads`;
-  const body = { linkedinUrl: linkedinUrl };
-
-  console.log("REABILITY: URL: ", apiUrl);
-  console.log("REABILITY: Body: ", body);
-
+// Function to create Lemlist contacts
+async function createLemlistContacts(urls, apiKey) {
   try {
     const response = await new Promise((resolve, reject) => {
       chrome.runtime.sendMessage(
         {
-          action: "callLemList",
+          action: "callLemListBatch",
           method: "POST",
-          url: apiUrl,
-          body: body,
+          url: `https://api.lemlist.com/api/campaigns/cam_Dz9yzoMjNz7NLA26i/leads`,
+          api_key: apiKey,
+          urls: urls,
         },
         (response) => {
           if (chrome.runtime.lastError) {
@@ -72,14 +73,10 @@ async function addContactToLemlist(apiKey, linkedinUrl) {
     });
 
     console.log("REABILITY: Response received", response);
-    if (response) {
-      if (response.error) {
-        console.error("REABILITY: Error adding contact:", response.error);
-      } else if (response.data) {
-        console.log("REABILITY: Contact added:", response.data);
-      } else {
-        console.error("REABILITY: Unexpected response format", response);
-      }
+    if (response && response.message) {
+      console.log("REABILITY:", response.message);
+    } else if (response && response.error) {
+      console.error("REABILITY: Error adding contacts:", response.error);
     } else {
       console.error("REABILITY: No response received");
     }

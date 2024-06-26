@@ -1,53 +1,62 @@
 chrome.runtime.onInstalled.addListener(() => {
-  console.log("REABILITY: Extension installed");
+  console.log("Extension installed");
 });
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log("REABILITY: Received message", request);
-  if (request.action === "callLemList") {
-    chrome.storage.local.get(["lemlist_api_key"], function (result) {
-      const apiKey = result.lemlist_api_key;
-      if (!apiKey) {
-        console.log("REABILITY: API key not found in storage");
-        sendResponse({ error: "API key not found in storage" });
-        return;
-      }
-
-      console.log("REABILITY: API key found", apiKey);
-
-      const url = new URL(request.url);
-      url.searchParams.append("access_token", apiKey);
-      console.log("REABILITY: Fetch URL", url.toString());
+chrome.runtime.onMessage.addListener(
+  (scriptRequest, scriptSender, scriptResponse) => {
+    console.log("Received script message", scriptRequest);
+    if (scriptRequest.action === "callLemListBatch") {
+      const apiKey = scriptRequest.api_key;
+      const apiUrl = new URL(scriptRequest.url);
+      apiUrl.searchParams.append("access_token", apiKey);
+      console.log("Fetch URL", apiUrl.toString());
 
       const options = {
-        method: request.method,
+        method: scriptRequest.method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(request.body),
       };
 
-      fetch(url.toString(), options)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(
-              `Network response was not ok: ${response.statusText}`
-            );
+      const processUrls = async (urls) => {
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const linkedinUrl of urls) {
+          console.log(
+            `Calling lemlist with: ${JSON.stringify({ linkedinUrl })}`
+          );
+
+          try {
+            const lemlistResponse = await fetch(apiUrl.toString(), {
+              ...options,
+              body: JSON.stringify({ linkedinUrl }),
+            });
+
+            const lemlistData = await lemlistResponse.text();
+            console.log("Lemlist response received:", lemlistData);
+
+            if (lemlistResponse.ok) {
+              successCount++;
+              console.log("Lemlist response.ok");
+            } else {
+              errorCount++;
+              console.log("Lemlist !response.ok");
+            }
+          } catch (error) {
+            errorCount++;
+            console.error("Lemlist comms error");
           }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("REABILITY: Fetch successful, sending response", data);
-          sendResponse({ data: data });
-        })
-        .catch((error) => {
-          console.error("REABILITY: Fetch error", error);
-          sendResponse({ error: error.message });
-        });
+        }
+
+        const message = `${successCount} leads created in Lemlist, ${errorCount} errors occurred`;
+        scriptResponse({ message });
+      };
+
+      processUrls(scriptRequest.urls);
 
       // Return true to indicate you will send a response asynchronously
       return true;
-    });
-    return true; // Ensure this is returned immediately after registering async operations
+    }
   }
-});
+);
