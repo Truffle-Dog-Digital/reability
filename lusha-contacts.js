@@ -5,6 +5,21 @@ function setupScanButton() {
   }
 }
 
+function setupGrabButton() {
+  const scanButton = document.getElementById("reabilityLushaListGrab");
+  if (scanButton) {
+    scanButton.addEventListener("click", handleLushaListGrabClick);
+  }
+}
+
+// New function handleLushaListGrabClick
+async function handleLushaListGrabClick() {
+  console.log("REABILITY: Grab Contacts button clicked");
+  const linkedinUrls = await getLushaContacts();
+  const lineDelimitedUrls = linkedinUrls.join("\n");
+  console.log(lineDelimitedUrls);
+}
+
 // New function to get API key
 async function getApiKey() {
   let apiKey = await getLocalStorage("lemlist_api_key");
