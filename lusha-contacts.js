@@ -1,50 +1,31 @@
-function setupScanButton() {
-  const scanButton = document.getElementById("reabilityScanButton");
-  if (scanButton) {
-    scanButton.addEventListener("click", handleScanButtonClick);
-  }
-}
-
 function setupGrabButton() {
-  const scanButton = document.getElementById("reabilityLushaListGrab");
-  if (scanButton) {
-    scanButton.addEventListener("click", handleLushaListGrabClick);
+  const grabButton = document.getElementById("reabilityLushaListGrab");
+  if (grabButton) {
+    grabButton.addEventListener("click", handleLushaListGrabClick);
   }
 }
 
-// New function handleLushaListGrabClick
+function setupClearButton() {
+  const clearButton = document.getElementById("clearProfiles");
+  if (clearButton) {
+    clearButton.addEventListener("click", handleClearProfilesClick);
+  }
+}
+
+// Function to handle Grab Contacts button click
 async function handleLushaListGrabClick() {
   console.log("REABILITY: Grab Contacts button clicked");
   const linkedinUrls = await getLushaContacts();
-  const lineDelimitedUrls = linkedinUrls.join("\n");
-  console.log(lineDelimitedUrls);
+  console.log("REABILITY: Found LinkedIn URLs", linkedinUrls);
+  await appendLinkedInUrlsToStorage(linkedinUrls);
+  const allUrls = await getLocalStorage("REABILITY_PROFILES");
+  console.log("REABILITY: All LinkedIn URLs in storage", allUrls);
+  const lineDelimitedUrls = allUrls.join("\n");
+  await copyToClipboard(lineDelimitedUrls);
+  console.log("REABILITY: Line delimited URLs", lineDelimitedUrls);
 }
 
-// New function to get API key
-async function getApiKey() {
-  let apiKey = await getLocalStorage("lemlist_api_key");
-  if (!apiKey) {
-    apiKey = prompt("Please enter your Lemlist API Key:");
-    if (apiKey) {
-      await setLocalStorage("lemlist_api_key", apiKey);
-      console.log("REABILITY: API key saved.");
-    }
-  }
-  return apiKey;
-}
-
-// Refactored handleScanButtonClick
-async function handleScanButtonClick() {
-  console.log("REABILITY: Scan button clicked");
-  const apiKey = await getApiKey();
-  if (apiKey) {
-    console.log("REABILITY: API key available, processing contacts");
-    const linkedinUrls = await getLushaContacts();
-    await createLemlistContacts(linkedinUrls, apiKey);
-  }
-}
-
-// Renamed function to get selected Lusha contacts
+// Function to get selected Lusha contacts
 async function getLushaContacts() {
   const contacts = document.querySelectorAll(
     "[data-test-id^='contacts-table-contact-name-']"
@@ -61,52 +42,65 @@ async function getLushaContacts() {
     }
   });
 
-  console.log("REABILITY: Found LinkedIn URLs", linkedinUrls);
   return linkedinUrls;
 }
 
-// Function to create Lemlist contacts
-async function createLemlistContacts(urls, apiKey) {
-  try {
-    const response = await new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage(
-        {
-          action: "callLemListBatch",
-          method: "POST",
-          url: `https://api.lemlist.com/api/campaigns/cam_Dz9yzoMjNz7NLA26i/leads`,
-          api_key: apiKey,
-          urls: urls,
-        },
-        (response) => {
-          if (chrome.runtime.lastError) {
-            reject(new Error(chrome.runtime.lastError.message));
-          } else {
-            resolve(response);
-          }
-        }
-      );
-    });
+// Function to append LinkedIn URLs to local storage
+async function appendLinkedInUrlsToStorage(newUrls) {
+  const existingUrls = (await getLocalStorage("REABILITY_PROFILES")) || [];
+  const updatedUrls = [...existingUrls, ...newUrls];
+  await setLocalStorage("REABILITY_PROFILES", updatedUrls);
+}
 
-    console.log("REABILITY: Response received", response);
-    if (response && response.message) {
-      console.log("REABILITY:", response.message);
-    } else if (response && response.error) {
-      console.error("REABILITY: Error adding contacts:", response.error);
-    } else {
-      console.error("REABILITY: No response received");
-    }
+// Function to handle Clear Profiles button click
+async function handleClearProfilesClick() {
+  console.log("REABILITY: Clear Profiles button clicked");
+  await clearLinkedInUrlsFromStorage();
+  await clearClipboard();
+}
+
+// Function to clear LinkedIn URLs from local storage
+async function clearLinkedInUrlsFromStorage() {
+  try {
+    await setLocalStorage("REABILITY_PROFILES", []);
+    console.log("REABILITY: LinkedIn URLs cleared from storage");
   } catch (error) {
-    console.error("REABILITY: Error during request:", error.message);
+    console.error(
+      "REABILITY: Error clearing LinkedIn URLs from storage",
+      error
+    );
   }
 }
 
+// Function to clear the clipboard
+async function clearClipboard() {
+  try {
+    await navigator.clipboard.writeText("");
+    console.log("REABILITY: Clipboard cleared");
+  } catch (error) {
+    console.error("REABILITY: Error clearing the clipboard", error);
+  }
+}
+
+// Function to copy text to clipboard
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    console.log("REABILITY: Text copied to clipboard");
+  } catch (error) {
+    console.error("REABILITY: Error copying text to clipboard", error);
+  }
+}
+
+// Initialize and inject the HTML and CSS
 injectHTMLAndCSS(
   "lusha-contacts.html",
   "lusha-contacts.css",
   "#reabilityDrawerContent"
 )
   .then(() => {
-    setupScanButton();
+    setupGrabButton();
+    setupClearButton();
   })
   .catch((error) => {
     console.error(
